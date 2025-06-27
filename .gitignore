@@ -1,0 +1,5 @@
+# All the datasets generated will be ignored and be loaded when the notebook 00_Data_Loading_Preprocessing.ipynb will be executed
+data/ 
+
+# All the environment folders is ignored. The environment will be created when "pip install -r requirements.txt" is run after cloning the repo.
+.venv/
