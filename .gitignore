@@ -3,3 +3,10 @@ data/
 
 # All the environment folders is ignored. The environment will be created when "pip install -r requirements.txt" is run after cloning the repo.
 .venv/
+
+# All the scaler & linear regression models will be ignored
+models/
+
+# pycache
+__pycache__/
+*.pyc
