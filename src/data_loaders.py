@@ -1,3 +1,8 @@
+"""
+This python file defines all the data loaders and other utility functions required for data loading and processing. 
+"""
+
+
 # import libraries required
 import random
 import os
@@ -61,9 +66,8 @@ def apply_cluster_relation(X, cluster_idx, informative_idx, multicollinearity_st
         non_informative_idx = np.setdiff1d(cluster_idx, informative_idx)
         
         relations_dict = {
-            1 : lambda x1, x2 : multicollinearity_strength*x1 + (1 - multicollinearity_strength)*x2,
-            2 : lambda x1, x2 : multicollinearity_strength*x1 - (1 - multicollinearity_strength)*x2, 
-            3 : lambda x1, x2 : (1 - multicollinearity_strength)*x2 + multicollinearity_strength*np.sqrt(np.abs(x1)),
+            1 : lambda x1, x2 : multicollinearity_strength*x1 + (1 - multicollinearity_strength)*x2 ,
+            2 : lambda x1, x2 : multicollinearity_strength*x1 - (1 - multicollinearity_strength)*x2 , 
         }
             
         if len(non_informative_idx) in [0, 1]:
@@ -73,7 +77,7 @@ def apply_cluster_relation(X, cluster_idx, informative_idx, multicollinearity_st
         anchor_values = X[:, informative_idx]
           
         for idx in non_informative_idx:
-            X[:, idx] = relations_dict[random.randint(1,3)](X[:, idx], anchor_values)
+            X[:, idx] = relations_dict[np.random.randint(1,3)](X[:, idx], anchor_values)
             
         print("Apply correlation to clusters generated successfully!!")
     except (Exception) as e:
@@ -162,34 +166,8 @@ def generate_synthetic_dataset(n_samples: int = 100,
         
     return None, None, None
 
-# Function to load and process Smart Farm Yield Data
-def load_process_farm_yield_data() -> Tuple[pd.DataFrame, pd.DataFrame]:
-    
-    # path to kaggle dataset
-    kaggle_dataset_path = "https://www.kaggle.com/datasets/atharvasoundankar/smart-farming-sensor-data-for-yield-prediction/data"
-    
-    # path to save 
-    file_path = "data\\raw\smart-farming-sensor-data-for-yield-prediction\Smart_Farming_Crop_Yield_2024.csv"
-    # downloading the dataset
-    od.download(kaggle_dataset_path, "data\\raw")
-    
-    df = pd.read_csv(file_path)
-    
-    target_feature = "yield_kg_per_hectare"
-    
-    X,y = df.drop(columns=[target_feature], axis=1), df[target_feature]
-    
-    """
-    The dataset here is not scaled, and all kinds of preprocessing is applied, 
-    in the notebook "notebooks/00_Data_Loading_Preprocessing.ipynb".
-    This is done so that the EDA is a bit more intuitive and visualizable.
-    """
-    return X, y
-    
-
 # This function is responsible for generating or loading synthetic or real world datsets using the functions defined above
-def data_loading_preprocessing(data_type : str = "synthetic", # or "farm-yield-data",
-                               n_samples: int = 100, # required for synthetic data generation
+def data_loading_preprocessing(n_samples: int = 100, # required for synthetic data generation
                                n_features: int = 15, # required for synthetic data generation
                                n_informative: int = 3, # required for synthetic data generation
                                noise: float = 0.5, # required for synthetic data generation
@@ -197,13 +175,9 @@ def data_loading_preprocessing(data_type : str = "synthetic", # or "farm-yield-d
                                ) -> Tuple[pd.DataFrame, pd.DataFrame, np.ndarray]:
     
     try:
-        if data_type == "synthetic":
-            X, y, true_beta = generate_synthetic_dataset(n_samples, n_features, n_informative, noise, multicollinearity_strength)
-            return X, y, true_beta
-        elif data_type == "farm-yield-data":
-            X, y = load_process_farm_yield_data()
-            return X, y, None
-        else:
-            print("Error: Invalid data type!!")
+        
+        X, y, true_beta = generate_synthetic_dataset(n_samples, n_features, n_informative, noise, multicollinearity_strength)
+        return X, y, true_beta
+        
     except Exception as e:
         print(f"Error in Loading & Processing Datasets. Error {e}")
